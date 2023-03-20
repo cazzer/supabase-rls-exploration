@@ -22,7 +22,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "prettier --write src"
+    "lint": "prettier --write src",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
@@ -37,6 +38,7 @@
     ]
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "prettier --write --ignore-unknown",
+    "*.{js,css,md}": "prettier --write"
   }
 }
