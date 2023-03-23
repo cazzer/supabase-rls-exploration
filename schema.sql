@@ -7,7 +7,7 @@ alter table items enable row level security;
 
 create table item_permissions (
   id uuid not null primary key,
-  item_id uuid references items(id) on delete cascade,
+  item_id uuid references items(id) on delete cascade dererrable initially deferred,
   permitted uuid not null primary key
 );
 alter table item_permissions enable row level security;
@@ -25,7 +25,7 @@ end
 $$ language plpgsql;
 
 create trigger insert_permission_trigger
-after insert
+before insert
 on items
 for each row
 execute procedure insert_permission();
@@ -54,17 +54,6 @@ create policy insert_items
 on items
 for insert
 with check (true);
-
-create policy return_new_item
-on items
-for select
-using (
-  not exists(
-    select item_id
-    from permissions
-    where item_id = items.id
-  )
-);
 
 create policy manage_permissions
 on item_permissions
