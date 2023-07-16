@@ -15,15 +15,36 @@ CREATE TABLE item_permissions (
 );
 alter table item_permissions enable row level security;
 
+create policy insert_items
+on items
+for insert
+to authenticated
+with check (true);
+
+CREATE OR REPLACE FUNCTION volatilePermissionCheck(item_id uuid) RETURNS TABLE (id uuid) AS $$
+    select id from item_permissions
+    where item_permissions.item_id = item_id
+    and permitted_id = auth.uid()
+$$ LANGUAGE sql VOLATILE;
+
+CREATE POLICY select_item
+ON items
+FOR SELECT
+to authenticated
+USING (
+    EXISTS(select * from volatilePermissionCheck(items.id))
+);
+
 create policy manage_item
 on items
 for all
+to authenticated
 using (
   exists(
     select item_id
     from item_permissions
     where items.id = item_id
-    and permitted_id = current_setting('bd.user_id')::uuid
+    and permitted_id = auth.uid()
   )
 )
 with check (
@@ -31,14 +52,9 @@ with check (
     select item_id
     from item_permissions
     where items.id = item_id
-    and permitted_id = current_setting('bd.user_id')::uuid
+    and permitted_id = auth.uid()
   )
 );
-
-create policy insert_items
-on items
-for insert
-with check (true);
 
 create or replace function insert_permission()
   returns trigger
@@ -47,44 +63,55 @@ create or replace function insert_permission()
 begin
   insert into item_permissions (item_id, permitted_id) values (
     new.id,
-    current_setting('bd.user_id')::uuid
+    auth.uid()
   );
   return new;
 end
 $$ language plpgsql;
 
 create trigger insert_permission_trigger
-after insert
+before insert
 on items
 for each row
 execute procedure insert_permission();
 
-
-create policy insert_item_permission_for_new_item
-on item_permissions
-for insert
-using (
-  permitted_id = current_setting('bd.user_id')::uuid
-)
-with check (
-  not exists(
-    select true
-    from item_permissions
-    where item_id = item_id
-  )
-);
+-- create policy insert_item_permission_for_new_item
+-- on item_permissions
+-- for insert
+-- with check (
+--   permitted_id = auth.uid()
+--   and not exists(
+--     select true
+--     from item_permissions
+--     where item_id = item_id
+--   )
+-- );
 
 create policy select_item_permissions
 on item_permissions
 for select
+to authenticated
 using (
-  permitted_id = current_setting('bd.user_id')::uuid
+  true
+);
+
+create policy insert_item_permissions
+on item_permissions
+for insert
+to authenticated
+with check (
+  exists (
+    select id
+    from item_permissions
+    where item_id = item_id
+    and permitted_id = auth.uid()
+  )
 );
 
 create policy delete_item_permissions
 on item_permissions
 for delete
+to authenticated
 using (
-  permitted_id = current_setting('bd.user_id')::uuid
+  permitted_id = auth.uid()
 );
-

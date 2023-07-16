@@ -4,7 +4,8 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { useAuthStateChange, useClient } from 'react-supabase'
+
+import { client } from '../supabase'
 
 const initialState: {
   session: any
@@ -17,18 +18,17 @@ export function AuthProvider({
 }: {
   children: ReactComponentElement<any>
 }) {
-  const client = useClient()
   const [state, setState] = useState(initialState)
 
   useEffect(() => {
-    const session = client.auth.session()
-    setState({ session, user: session?.user ?? null })
-  }, [])
+    async function getSession() {
+      const { data, error } = await client.auth.getSession()
+      console.log(data)
+      setState({ session: data, user: null })
+    }
 
-  useAuthStateChange((event, session) => {
-    console.log(`Supabase auth event: ${event}`, session)
-    setState({ session, user: session?.user ?? null })
-  })
+    getSession().catch(console.error)
+  }, [])
 
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>
 }

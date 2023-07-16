@@ -1,19 +1,41 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useInsert, useRealtime } from 'react-supabase'
 import { Stage, Layer } from 'react-konva'
 
+import { client } from '../supabase'
 import Item from './item'
 import { useAuth } from '../auth/hook'
 
 export default function CanvasView() {
-  const [result, _] = useRealtime('items')
+  // const [result, _] = useRealtime('items')
   const [insertResult, insertItem] = useInsert('items')
   const { user } = useAuth()
 
-  const { data, fetching, error } = result
+  const [items, setItems] = useState([])
 
-  if (fetching) return <p>Loading...</p>
-  if (error != null || data == null) return <p>Oh no... {error?.message}</p>
+  useEffect(() => {
+    const channel = client
+      //@ts-ignore
+      .channel('realtime-items')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+        },
+        (payload: any) => {
+          console.log(payload)
+        }
+      )
+      .subscribe()
+  }, [])
+
+  // const { data, fetching, error } = result
+
+  // if (fetching) return <p>Loading...</p>
+  // if (error != null || data == null) return <p>Oh no... {error?.message}</p>
+
+  const data: any = []
 
   const handleStageClick = (event: any) => {
     insertItem({
@@ -22,7 +44,7 @@ export default function CanvasView() {
         y: event.evt.layerY - 50,
         width: 100,
         height: 100,
-        color: user.id.substr(0, 6),
+        // color: user.id.substr(0, 6),
       },
     })
   }
@@ -34,7 +56,7 @@ export default function CanvasView() {
       onClick={handleStageClick}
     >
       <Layer>
-        {data.map((item) => (
+        {data.map((item: any) => (
           <Item key={item.id} item={item} />
         ))}
       </Layer>
