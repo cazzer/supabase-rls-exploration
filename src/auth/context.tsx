@@ -4,8 +4,7 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-
-import { client } from '../supabase'
+import { useClient } from 'react-supabase'
 
 const initialState: {
   session: any
@@ -19,15 +18,12 @@ export function AuthProvider({
   children: ReactComponentElement<any>
 }) {
   const [state, setState] = useState(initialState)
+  const client = useClient()
 
   useEffect(() => {
-    async function getSession() {
-      const { data, error } = await client.auth.getSession()
-      console.log(data)
-      setState({ session: data, user: null })
-    }
-
-    getSession().catch(console.error)
+    client.auth.onAuthStateChange((event, session) => {
+      setState({ session, user: session?.user })
+    })
   }, [])
 
   return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>

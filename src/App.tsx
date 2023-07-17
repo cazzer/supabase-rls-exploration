@@ -30,7 +30,7 @@ export default function App() {
 function Root() {
   const { user } = useAuth()
 
-  if (user) {
+  if (!user) {
     return <LoginView />
   }
 

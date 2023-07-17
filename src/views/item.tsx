@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { useDelete, useUpdate } from 'react-supabase'
 import { Rect } from 'react-konva'
 import { Easings } from 'konva/lib/Tween'
@@ -6,13 +6,16 @@ import { KonvaEventObject } from 'konva/lib/Node'
 
 export default function Item({ item }: { item: any }) {
   const rect = useRef(null)
-  const [stateSettings, setStateSettings] = useState({
-    editing: false,
-    local: false,
-  })
-  const [itemState, setItemState] = useState({ ...item })
-  const [_, updateItem] = useUpdate('items')
+  const [updateItemResult, updateItem] = useUpdate('items')
   const [deleteResult, deleteItem] = useDelete('items')
+
+  if (updateItemResult.error != null) {
+    console.error('Update error:', updateItemResult.error)
+  }
+
+  if (deleteResult.error != null) {
+    console.error('Delete error:', deleteResult.error)
+  }
 
   useMemo(() => {
     if (!rect.current) {
@@ -45,19 +48,16 @@ export default function Item({ item }: { item: any }) {
     deleteItem((query) => query.eq('id', item.id))
   }
 
-  const itemToUse = stateSettings.local ? itemState : item
-  const reactAttrs = getRectAttributes(itemToUse.metadata)
+  const reactAttrs = getRectAttributes(item.metadata)
 
   return (
     <Rect
+      ref={rect}
       width={reactAttrs.width}
       height={reactAttrs.height}
       x={reactAttrs.x}
       y={reactAttrs.y}
-      stroke="black"
-      strokeWidth={2}
-      strokeEnabled={itemToUse.metadata?.editing || false}
-      fill={`#${itemToUse.metadata?.color || 'black'}`}
+      fill={`#${item.metadata?.color || 'black'}`}
       shadowBlur={5}
       onDragEnd={handleDragEnd}
       onClick={handleDeleteClick}

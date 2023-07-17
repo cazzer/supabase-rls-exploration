@@ -7,6 +7,7 @@ CREATE TABLE items (
     metadata jsonb DEFAULT '{}'::jsonb
 );
 alter table items enable row level security;
+alter publication supabase_realtime add table items;
 
 CREATE TABLE item_permissions (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -14,6 +15,7 @@ CREATE TABLE item_permissions (
     permitted_id uuid NOT NULL
 );
 alter table item_permissions enable row level security;
+alter publication supabase_realtime add table item_permissions;
 
 create policy insert_items
 on items
@@ -32,7 +34,11 @@ ON items
 FOR SELECT
 to authenticated
 USING (
-    EXISTS(select * from volatilePermissionCheck(items.id))
+    NOT EXISTS (
+      select *
+      from item_permissions
+      where item_id = items.id
+    )
 );
 
 create policy manage_item
