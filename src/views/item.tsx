@@ -39,13 +39,23 @@ export default function Item({ item }: { item: any }) {
           y: event.target.attrs.y,
         },
       },
-      (query) => query.eq('id', item.id)
+      (query: any) => query.eq('id', item.id)
     )
   }
 
-  const handleDeleteClick = (event: KonvaEventObject<MouseEvent>): void => {
+  const handleClick = (event: KonvaEventObject<MouseEvent>): void => {
     event.cancelBubble = true
-    deleteItem((query) => query.eq('id', item.id))
+
+    if (event.evt.shiftKey) {
+      updateItem(
+        {
+          public: !item.public,
+        },
+        (query: any) => query.eq('id', item.id)
+      )
+    } else {
+      deleteItem((query: any) => query.eq('id', item.id))
+    }
   }
 
   const reactAttrs = getRectAttributes(item.metadata)
@@ -57,10 +67,12 @@ export default function Item({ item }: { item: any }) {
       height={reactAttrs.height}
       x={reactAttrs.x}
       y={reactAttrs.y}
+      stroke={item.public ? 'green' : 'black'}
+      strokeEnabled={item.public}
       fill={`#${item.metadata?.color || 'black'}`}
       shadowBlur={5}
       onDragEnd={handleDragEnd}
-      onClick={handleDeleteClick}
+      onClick={handleClick}
       draggable
     />
   )

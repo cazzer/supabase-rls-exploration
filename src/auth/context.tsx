@@ -21,7 +21,7 @@ export function AuthProvider({
   const client = useClient()
 
   useEffect(() => {
-    client.auth.onAuthStateChange((event, session) => {
+    client.auth.onAuthStateChange((event: any, session: any) => {
       setState({ session, user: session?.user })
     })
   }, [])

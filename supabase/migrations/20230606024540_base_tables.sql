@@ -4,6 +4,7 @@ CREATE TABLE items (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     content text,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
+    public boolean NOT NULL DEFAULT false,
     metadata jsonb DEFAULT '{}'::jsonb
 );
 alter table items enable row level security;
@@ -60,6 +61,14 @@ with check (
     where items.id = item_id
     and permitted_id = auth.uid()
   )
+);
+
+create policy select_public_item
+on items
+for select
+to public
+using (
+  public = true
 );
 
 create or replace function insert_permission()
