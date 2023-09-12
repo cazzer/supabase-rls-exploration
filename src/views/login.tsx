@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import { useSignIn, useSignUp } from 'react-supabase'
 
 export default function LoginView() {
-  const [signInResult, signIn] = useSignIn()
-  const [signUpResult, signUp] = useSignUp()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const [signInResult, signIn] = useSignIn()
+  const [signUpResult, signUp] = useSignUp()
 
   const onEmailChange = (event: any) => {
     setEmail(event.target.value)
@@ -15,11 +16,11 @@ export default function LoginView() {
     setPassword(event.target.value)
   }
 
-  const onSignInClick = (event: any) => {
+  const onSignInClick = async (event: any) => {
     signIn({ email, password })
   }
 
-  const onSignUpClick = (event: any) => {
+  const onSignUpClick = async (event: any) => {
     signUp({ email, password })
   }
 

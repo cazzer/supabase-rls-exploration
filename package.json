@@ -2,28 +2,36 @@
   "name": "supabase-rls-exploration",
   "version": "0.1.0",
   "private": true,
+  "main": "src/index",
   "dependencies": {
-    "@supabase/supabase-js": "1",
-    "konva": "^8.4.2",
+    "@supabase/supabase-js": "1.35.7",
+    "konva": "^9.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-konva": "^18.2.5",
+    "react-konva": "^18.2.8",
     "react-scripts": "5.0.1",
-    "react-supabase": "^0.2.0"
+    "react-supabase": "^0.2.0",
+    "supabase": "^1.93.0"
   },
   "devDependencies": {
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "husky": "^8.0.3",
     "prettier": "^2.8.5",
     "typescript": "^5.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-web-local": "NODE_ENV=local react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "lint": "prettier --write src",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "reset-db": "supabase db reset",
+    "test-db": "supabase db test",
+    "start-db": "supabase start",
+    "stop-db": "supabase stop"
   },
   "browserslist": {
     "production": [

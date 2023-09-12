@@ -34,7 +34,7 @@ export default function CanvasView() {
       onClick={handleStageClick}
     >
       <Layer>
-        {data.map((item) => (
+        {data.map((item: any) => (
           <Item key={item.id} item={item} />
         ))}
       </Layer>

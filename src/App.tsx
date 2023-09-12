@@ -1,9 +1,9 @@
 import React from 'react'
-import { createClient } from '@supabase/supabase-js'
 import { Provider } from 'react-supabase'
 
 import { AuthProvider } from './auth/context'
 import { useAuth } from './auth/hook'
+import { client } from './supabase'
 
 import LoginView from './views/login'
 import CanvasView from './views/canvas'
@@ -17,11 +17,6 @@ if (
   )
 }
 
-const client = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_KEY
-)
-
 export default function App() {
   return (
     <Provider value={client}>
@@ -33,9 +28,7 @@ export default function App() {
 }
 
 function Root() {
-  const { session, user } = useAuth()
-
-  console.log(user, session)
+  const { user } = useAuth()
 
   if (!user) {
     return <LoginView />
