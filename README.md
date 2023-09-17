@@ -50,6 +50,8 @@ More on unit testing with Supabase is [in their docs](https://supabase.com/docs/
 
 ### Visually
 
+![simple visual demo](https://github.com/cazzer/supabase-rls-exploration/assets/2466842/18c8318e-5d87-407a-ab93-d7bff879fd4e)
+
 Ok this is what the web client is for, and that's it. So if you don't like the way it looks then know that I agree with you, I just wanted to visualize the behavior that those unit tests have already proven. But anyway, when you did the `start-local` it should've opened up your browser to `http://localhost:3000/` or something. Here is how to use that rather unsightly application:
 
 1. "Sign Up", (remember this is just local, so I normally use `asdf@asdf.com` and `asdfasdf`). The Supabase stack will just validate that the email looks email-y and the password has at least six characters, neither of which will show as an error in the UI if you get it wrong
