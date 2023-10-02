@@ -7,6 +7,12 @@ There are two things going on here:
 
 ## Running Everything Locally
 
+I'll go over what the following commands do in detail, but here's the quick hits:
+- `yarn start-db` starts up the Supabase stack, (requires Docker to be running)
+- `yarn test-db` runs the pgTap tests against the stack
+- `yarn reset-db` resets the DB
+- `yarn start-web-local` starts the React interface up pointed at your local Supabase stack, (requires some ENV to be set, details below)
+
 ### Docker
 
 All the batteries are included except for Docker; you've gotta do that part yourself. [Here's a link](https://www.docker.com/products/docker-desktop/) if need one. Once you have Docker installed and running, start the Supabase stack up locally with:
