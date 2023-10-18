@@ -19,6 +19,7 @@
     "@types/react-dom": "^18.0.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.5",
+    "sql-formatter": "^13.0.0",
     "typescript": "^5.0.2"
   },
   "scripts": {
@@ -31,7 +32,8 @@
     "reset-db": "supabase db reset",
     "test-db": "supabase db test",
     "start-db": "supabase start",
-    "stop-db": "supabase stop"
+    "stop-db": "supabase stop",
+    "lint-sql": "sql-formatter --config sql-formatter.json --fix supabase/**/*.sql"
   },
   "browserslist": {
     "production": [
@@ -45,8 +47,12 @@
       "last 1 safari version"
     ]
   },
+  "husky": {
+    "hooks": {
+        "pre-commit": "lint-sql"
+    }
+  },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown",
     "*.{js,css,md}": "prettier --write"
   }
 }
