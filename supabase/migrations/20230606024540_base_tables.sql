@@ -1,6 +1,6 @@
 create extension if not exists "uuid-ossp";
 
-create TABLE
+CREATE TABLE
   items (
     id uuid default gen_random_uuid () primary key,
     content text,
