@@ -1,6 +1,6 @@
 create extension if not exists "uuid-ossp";
 
-CREATE TABLE
+create table
   items (
     id uuid default gen_random_uuid () primary key,
     content text,
@@ -86,7 +86,7 @@ begin
 end
 $$ language plpgsql;
 
-create trigger insert_permission_trigger
+create trigger insert_item_permission_trigger
 after insert on items for each row
 execute procedure insert_permission ();
 
